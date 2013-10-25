@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" ng-app="blogApp">
+<head>
+ <meta charset="utf-8">
+ 
+ <title></title>
+ 
+ <script src="http://code.jquery.com/jquery-latest.js"></script>
+ <script src="js/webSqlSync.js" type="application/x-javascript" charset="utf-8"></script>
+ <style>
+ 
+.mainContainer{
+ position:absolute;
+ width:500px;
+ height:400px;
+ z-index:15;
+ top:50%;
+ left:50%;
+ 
+ 
+}
+ 
+ </style>
+ </head>
+ 
+ <body>
+ <form action="#" method="post" class="form-horizontal" id="formCuts">
+	 <div class="mainContainer">
+		Name: <input type="text" id="txtName" name="personname"> </input>
+		 <div class="">
+			 <label>
+			 <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" >
+			 Yes
+			 </label>
+			 <label>
+			 <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" >
+			 No
+			 </label>
+		 </div>
+	 </div>
+ </form>
+ <script>
+   //create database on browser
+   var db = openDatabase("nithya", '1.0', 'my first database', 2 * 1024 * 1024);
+    $(document).ready(function(){
+	   initDB();
+	   
+	   handleFormData()
+	   
+	});
+	
+	//init db like creating table if not created
+	function initDB(){
+	  var user = "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name varchar(500))";
+	  db.transaction(function (tx) {
+ 
+		 tx.executeSql(user,[],onSuccess,onError);
+ 
+		// tx.executeSql("UPDATE SQLITE_SEQUENCE SET seq = -1 WHERE name = user ");
+ 
+	  },onError,onReadyTrans);
+	  
+	
+	};
+	
+	function handleFormData(){
+	  $('form')
+	   .change(function(){
+	       var userName = $('#txtName').val();
+		   
+		   db.transaction(function(tx){
+		       tx.executeSql("UPDATE SQLITE_SEQUENCE SET seq = -1 WHERE name = 'user'");
+				
+		       tx.executeSql("INSERT INTO user(name) VALUES(?)", [userName],onSuccess,onError);
+		   });
+		  
+	   });
+	}
+	
+	function onSuccess(tx, result){
+	  console.log("onSucess is called")
+	}
+	
+	function onError(err){
+	  console.log(err)
+	}
+	
+	
+	function onReadyTrans( ){
+		console.log( 'Transaction completed' )
+	}
+ 
+	
+ 
+	
+	
+	
+   
+ </script>
+ 
+ </body>
+ </html>
